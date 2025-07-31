@@ -6,6 +6,7 @@ import CreateEmployee from './pages/CreateEmployee';
 import ManageEmployee from './pages/ManageEmployee';
 import Login from './pages/Login';
 import Logs from './pages/Logs';
+import Home from './pages/Home';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 // Protected Route Component
@@ -58,6 +59,62 @@ function Navigation() {
           padding: 0,
           flexWrap: 'wrap'
         }}>
+          <li>
+            <Link 
+              to="/home" 
+              style={{
+                textDecoration: 'none',
+                color: '#333',
+                fontWeight: '500',
+                fontSize: '1.1rem',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '8px',
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                display: 'inline-block',
+                overflow: 'hidden'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.color = '#007bff';
+                e.target.style.transform = 'scale(1.05)';
+                e.target.style.backgroundColor = '#f8f9fa';
+                // Create animated underline
+                const underline = document.createElement('div');
+                underline.style.cssText = `
+                  position: absolute;
+                  bottom: 0;
+                  left: 0;
+                  width: 0;
+                  height: 2px;
+                  background: linear-gradient(90deg, #007bff, #0056b3);
+                  transition: width 0.3s ease;
+                  border-radius: 1px;
+                `;
+                underline.id = 'underline-home';
+                e.target.appendChild(underline);
+                setTimeout(() => {
+                  underline.style.width = '100%';
+                }, 10);
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = '#333';
+                e.target.style.transform = 'scale(1)';
+                e.target.style.backgroundColor = 'transparent';
+                // Remove underline
+                const underline = e.target.querySelector('#underline-home');
+                if (underline) {
+                  underline.style.width = '0';
+                  setTimeout(() => {
+                    if (underline.parentNode) {
+                      underline.parentNode.removeChild(underline);
+                    }
+                  }, 300);
+                }
+              }}
+            >
+              Home
+            </Link>
+          </li>
           <li>
             <Link 
               to="/employees" 
@@ -327,8 +384,13 @@ function AppContent() {
         minHeight: 'calc(100vh - 200px)'
       }}>
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/home" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } />
           <Route path="/employees" element={
             <ProtectedRoute>
               <EmployeeList />
